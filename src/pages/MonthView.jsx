@@ -23,9 +23,7 @@ import { Colors } from '../styles/theme';
 import { getMonthCalendar } from '../utils/time';
 import { EventModal } from '../modals/EventModal.jsx';
 import { MyCard } from '../styles/card';
-import { DATEFORMAT } from '../constants';
-
-const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+import { DATEFORMAT, weekDays } from '../constants';
 
 export const MonthViewPage = () => {
   const events = useSelector((state) => state.events.events);

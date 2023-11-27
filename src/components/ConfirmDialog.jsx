@@ -10,6 +10,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import moment from 'moment/moment';
 
+import { Colors } from '../styles/theme.js';
+
 export const ConfirmDialog = ({ openDialog, onClose, confirmAction, event }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -19,8 +21,8 @@ export const ConfirmDialog = ({ openDialog, onClose, confirmAction, event }) => 
       <DialogTitle>Are you sure you want to delete this event?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          This action will delete <strong>{event?.title}</strong> on{' '}
-          {moment(event?.date).format('dddd, DD MMMM')}. This action is irreversible
+          This action will delete <strong style={{ color: Colors.primary }}>{event?.title}</strong>{' '}
+          on {moment(event?.date).format('dddd, DD MMMM')}. This action is irreversible
         </DialogContentText>
       </DialogContent>
       <DialogActions>

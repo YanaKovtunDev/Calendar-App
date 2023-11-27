@@ -24,12 +24,11 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'react/jsx-curly-spacing': [2, 'never'],
     'react/prop-types': 0,
+    'react/jsx-filename-extension': 0,
 
     'no-console': 1,
     'no-unused-vars': 0,
 
-    'react/jsx-filename-extension': 0,
-    /*'import/extensions': ['error', 'js' | 'jsx'],*/
     'import/newline-after-import': 1,
     'import/no-duplicates': 2,
     'import/namespace': 0,

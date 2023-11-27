@@ -18,6 +18,44 @@ export const EventModal = ({ open, onClose, event, date }) => {
 
   const isEdit = !!event;
 
+  const validationSchema = object({
+    title: string().required(FORMTEXT.REQUIRED),
+    date: string(),
+    startTime: string(),
+    endTime: string().test('is-greater', FORMTEXT.TIMEVALIDATION, function (value) {
+      const { startTime } = this.parent;
+      return moment(value, DATEFORMAT.TIME).isAfter(moment(startTime, DATEFORMAT.TIME));
+    }),
+    description: string(),
+  });
+
+  const initialValues = {
+    title: isEdit ? event.title : '',
+    date: isEdit ? event.date : date ? date : moment().format(DATEFORMAT.DATE),
+    startTime: isEdit ? event.startTime : moment().format(DATEFORMAT.TIME),
+    endTime: isEdit ? event.endTime : moment().add(1, 'hour').format(DATEFORMAT.TIME),
+    description: isEdit ? event.description : '',
+  };
+
+  const onSubmitHandler = async (values, { setSubmitting }) => {
+    try {
+      setSubmitting(true);
+      if (isEdit) {
+        dispatch(editEvent({ ...values, id: event.id }));
+      } else {
+        const id = uuid();
+        dispatch(addEvent({ ...values, id }));
+      }
+      setSubmitting(false);
+      onClose();
+      setAlertVariant('success');
+      setAlertMessage('The information was updated successfully!');
+    } catch (e) {
+      setAlertVariant('error');
+      setAlertMessage(`Error: ${e}`);
+    }
+  };
+
   return (
     <>
       <Modal open={open} onClose={() => onClose()}>
@@ -27,52 +65,9 @@ export const EventModal = ({ open, onClose, event, date }) => {
               {isEdit ? 'Edit ' : 'New '} event
             </Typography>
             <Formik
-              validationSchema={object({
-                title: string().required(FORMTEXT.REQUIRED),
-                date: string(),
-                startTime: string(),
-                endTime: string().test('is-greater', FORMTEXT.TIMEVALIDATION, function (value) {
-                  const { startTime } = this.parent;
-                  return moment(value, DATEFORMAT.TIME).isAfter(moment(startTime, DATEFORMAT.TIME));
-                }),
-                description: string(),
-              })}
-              initialValues={{
-                title: isEdit ? event.title : '',
-                date: isEdit ? event.date : date ? date : moment().format(DATEFORMAT.DATE),
-                startTime: isEdit ? event.startTime : moment().format(DATEFORMAT.TIME),
-                endTime: isEdit ? event.endTime : moment().add(1, 'hour').format(DATEFORMAT.TIME),
-                description: isEdit ? event.description : '',
-              }}
-              onSubmit={async (values, { setSubmitting }) => {
-                if (isEdit) {
-                  try {
-                    setSubmitting(true);
-                    dispatch(editEvent({ ...values, id: event.id }));
-                    setSubmitting(false);
-                    onClose();
-                    /*setIsEdit(false);*/
-                    setAlertVariant('success');
-                    setAlertMessage('The event was edited successfully!');
-                  } catch (e) {
-                    setAlertVariant('error');
-                    setAlertMessage(`Error creating: ${e}`);
-                  }
-                } else {
-                  try {
-                    setSubmitting(true);
-                    const id = uuid();
-                    dispatch(addEvent({ ...values, id }));
-                    setSubmitting(false);
-                    onClose();
-                    setAlertVariant('success');
-                    setAlertMessage('The event was created successfully!');
-                  } catch (e) {
-                    setAlertVariant('error');
-                    setAlertMessage(`Edit error: ${e}`);
-                  }
-                }
-              }}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              onSubmit={onSubmitHandler}
             >
               {({ handleSubmit, values, errors, handleChange, isSubmitting }) => (
                 <form onSubmit={handleSubmit}>
